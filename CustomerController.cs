@@ -32,7 +32,7 @@ public class CustomerController : MonoBehaviour
 
     // 타운내에 대기중인 손님 또는 입장한 손님들
     [SerializeField] private List<BaseCustomer> _inTownCustomers;
-    // WaitingCustomers의 경우 LinkedList를 사용할 수도 있을거라 판단.
+    // LinkedList와 Queue를 고민했으나 전체적인 접근이 한번 필요해서 순회 비용을 위해 List 채용
     [SerializeField] private List<BaseCustomer> _waitingCustomers;
 
     // 타운안에 이용손님이 최대인 경우(대기손님x 순수 이용손님)
