@@ -3,7 +3,7 @@
     </div>
     <div style="text-align: left;"> 
     <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 이재교 [ Unity 클라이언트 프로그래머 ] </h2>  
-    <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">코딩을 하면서 세운 규칙과 스타일의 예시입니다</li> </div> 
+    <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">코딩을 하면서 세운 규칙과 스타일의 예시입니다. 협업 시 남들이 제 코드를 보고 어려움을 겪지 않았으면 좋겠다는 생각을 늘 품고 있습니다.</li> </div> 
     </div>
 
 <br><br>
