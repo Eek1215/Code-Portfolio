@@ -1,4 +1,3 @@
-# Code Style
 <div align= "center">
     <img src="https://capsule-render.vercel.app/api?type=rounded&color=bbf1c9&height=120&text=Style%20참조용%20Sample%20Code%20입니다&animation=fadeIn&fontColor=2a2727&fontSize=40" />
     </div>
