@@ -42,6 +42,11 @@
   Android의 경우 AudioSettings.OnAudioConfigurationChanged에 이벤트를 추가 해 기기의 변화가 있을 때 사운드 볼륨을 다시 재정의해주며,
   IOS의 경우 광고 재생 전 Configuration에 사운드 정보를 담고, 그 값을 AudioSettings.Reset으로 초기화 해줍니다.
 <br><br>
+* CustomerController <br>
+  - [어서와! 수달타운]은 손님이 타운을 이용하는 게임입니다. 이에 손님이 나오고 관리되는 프로세스입니다. 각 손님마다 특색이 있고 애니메이션이 존재하기에
+  하나의 클론으로 생성 후 이미지를 위에다 붙이는 방식은 불가하여 Prefab화로 Dictionary에서 관리를 합니다. 중간중간 손님이 해금되며 종류가 추가 되기에
+  다른 자료구조는 사용하면 안됩니다. 
+<br><br>
 * FacilityInfo <br>
   - 굉장히 간단한 코드로 ScriptableObject를 사용하는 예시입니다. 해당 정보를 InfotableMgr라는 코드에서 관리를 하며, 필요한 경우
   원하는 정보만 불러다가 사용합니다. 일종의 데이터 테이블을 간략화 한 것입니다.
