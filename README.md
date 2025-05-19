@@ -7,7 +7,7 @@
     </div>
 
 <br><br>
-
+<span style="font-size: 12px; color: green">크기는 12px이고 색상은 초록색인 텍스트</span>
 <span style="font-size: 36px">[ 코드를 작성 시 중요하게 생각하는 부분들 ]</span>
 <br>
 * 명명규칙을 세우고 준수하도록 합니다 (카멜, 파스칼 혼용 사용)
