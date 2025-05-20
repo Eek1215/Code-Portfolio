@@ -1,5 +1,5 @@
 <div align= "center">
-    <img src="https://capsule-render.vercel.app/api?type=rounded&color=bbf1c9&height=120&text=Style%20참조용%Code%20입니다&animation=fadeIn&fontColor=2a2727&fontSize=40" />
+    <img src="https://capsule-render.vercel.app/api?type=rounded&color=bbf1c9&height=120&text=Style%20참조용%20Code%20입니다&animation=fadeIn&fontColor=2a2727&fontSize=40" />
     </div>
     <div style="text-align: left;"> 
     <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 이재교 [ Unity 클라이언트 프로그래머 ] </h2>  
