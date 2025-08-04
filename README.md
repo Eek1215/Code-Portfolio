@@ -55,3 +55,15 @@
 * FacilityInfo <br>
   - 굉장히 간단한 코드로 ScriptableObject를 사용하는 예시입니다. 해당 정보를 InfotableMgr라는 코드에서 관리를 하며, 필요한 경우
   원하는 정보만 불러다가 사용합니다. 일종의 데이터 테이블을 간략화 한 것입니다.
+<br><br>
+* AddressableMgr <br>
+  - Addressables를 사용하게 되었을 때 Instance의 생성이 필요한지, 또는 단순한 Resource가 필요한지에 따라 실제로 Load하고 Release를
+    할 수 있도록 관리하는 매니저 클래스입니다.
+<br><br>
+* BuildingObj - FieldObj <br>
+  - DI를 프레임워크 없이 사용하기 위하여 최근에 작업한 Isometric에 포함 된 건물 오브젝트입니다. 상속을 기반으로 만든 부모 클래스이며,
+    FieldObj의 경우 BuildingObj를 상속하여 사용하여 만든, 텃밭 오브젝트로 여러 작물을 심고 재배할 수 있습니다.
+<br><br>
+* BuildingBehaviorInjector <br>
+  - BuildingObj에 DI를 주입시키기 위하여 사용하는 중간자의 역할로 인터페이스로 구현 된 클래스들을 갖고 있으며, 주입을 통하여 실행 함수를
+    주입시키고 BuildingObj에서 실행함수를 호출하게 하여 연결 된 실행함수를 호출할 수 있도록 하는 역할을 합니다.
