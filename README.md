@@ -67,3 +67,10 @@
 * BuildingBehaviorInjector <br>
   - BuildingObj에 DI를 주입시키기 위하여 사용하는 중간자의 역할로 인터페이스로 구현 된 클래스들을 갖고 있으며, 주입을 통하여 실행 함수를
     주입시키고 BuildingObj에서 실행함수를 호출하게 하여 연결 된 실행함수를 호출할 수 있도록 하는 역할을 합니다.
+
+<br><br><br><br>
+<h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < DI > </h3>
+- 협업에 중요한 의존성 주입을 통하여 개발하는 방식을 새 프로젝트에 다루어보았습니다. Zenject, VContainer를 사용하지 않은 기본 BehaviorInjector라는 주입기를
+직접 생성하여 BuildingObj에 주입하는 방식으로 하였습니다. 이는 프레임워크를 사용하기 이전 돌아가는 프로세스를 이해하기 위함이었으며, 차후에는 VContainer를 별도로
+공부를 하였습니다.
+
