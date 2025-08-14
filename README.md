@@ -67,7 +67,7 @@
 * BuildingBehaviorInjector <br>
   - BuildingObj에 DI를 주입시키기 위하여 사용하는 중간자의 역할로 인터페이스로 구현 된 클래스들을 갖고 있으며, 주입을 통하여 실행 함수를
     주입시키고 BuildingObj에서 실행함수를 호출하게 하여 연결 된 실행함수를 호출할 수 있도록 하는 역할을 합니다.
-
+-----------------------
 <br><br><br>
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < DI > </h3>
 - 협업에 중요한 의존성 주입을 통하여 개발하는 방식을 새 프로젝트에 다루어보았습니다. Zenject, VContainer를 사용하지 않은 기본 BehaviorInjector라는 주입기를
@@ -84,7 +84,7 @@
 * FieldObj <br>
   - BuildingObj를 상속받은 밭 오브젝트입니다. 밭 오브젝트만이 사용할 수 있는 기능을 위하여 IFieldObjClickCheck라는 인터페이스 구현체를 갖고 있습니다. 중재자는
     사용하지 않는 방식으로 갖고 있으며, 필요한 기능을 오버라이딩하여 사용합니다.
-
+-----------------------
 <br><br><br>
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < MVP > </h3>
 - UI를 효율적으로 관리하고 확장성을 넓히기 위하여 MVP 패턴을 활용하였습니다. 처음에는 인스펙터 바인딩을 통해 강한 결합구조를 갖고 있었습니다만,
