@@ -89,14 +89,14 @@
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < MVP > </h3>
 - UI를 효율적으로 관리하고 확장성을 넓히기 위하여 MVP 패턴을 활용하였습니다. 처음에는 인스펙터 바인딩을 통해 강한 결합구조를 갖고 있었습니다만,
   확장성과 의존성의 문제를 해결하기 위하여 MVP 패턴을 통해 View 작업자와 Presenter 작업자가 나뉘었음을 가정하여 구조를 재설계하였습니다. <br>
-  ShopPopup <br>
+  <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;">ShopPopup </h3><br>
   ㄴ ShopPopupWealthContent <br>
   ㄴ ShopPopupGemContent <br>
   ㄴ ShopPopupPackageContent <br>
   ㄴ ShopPopupCostumeContent <br>
   (위의 Content는 모두 Monobehavior 오브젝트입니다)
-<br><br>
-  <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;">ShopPopupPresenter </h3><br>
+<br><br><br>
+  <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> ShopPopupPresenter </h3><br>
   ㄴ ShopPopupPackagePresenter -> IShopPopupPackageContent <br>
   ㄴ ShopPopupGemPresenter     -> IShopPopupGemContent <br>
   ㄴ ShopPopupCostumePresenter -> IShopPopupCostumePresenter <br>
