@@ -89,24 +89,24 @@
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < MVP > </h3>
 - UI를 효율적으로 관리하고 확장성을 넓히기 위하여 MVP 패턴을 활용하였습니다. 처음에는 인스펙터 바인딩을 통해 강한 결합구조를 갖고 있었습니다만,
   확장성과 의존성의 문제를 해결하기 위하여 MVP 패턴을 통해 View 작업자와 Presenter 작업자가 나뉘었음을 가정하여 구조를 재설계하였습니다. <br>
-  ShopPopup 
+  ShopPopup <br>
   ㄴ ShopPopupWealthContent <br>
   ㄴ ShopPopupGemContent <br>
   ㄴ ShopPopupPackageContent <br>
   ㄴ ShopPopupCostumeContent <br>
   (위의 Content는 모두 Monobehavior 오브젝트입니다)
 <br><br>
-  ShopPopupPresenter
+  ShopPopupPresenter <br>
   ㄴ ShopPopupPackagePresenter -> IShopPopupPackageContent <br>
   ㄴ ShopPopupGemPresenter     -> IShopPopupGemContent <br>
   ㄴ ShopPopupCostumePresenter -> IShopPopupCostumePresenter <br>
   (WealthContent는 구조가 단순하여 Presenter를 나누지 않는 방향을 선택하였습니다. MVP 구조 역시 복잡하고 확장성이 있는 구조에서 필요로 한 것이기 때문에 선택이라고 생각을 합니다.)
-
+<br><br>
   Popup   -> Content O       PopupPresenter   -> ContentPresenter O
   Content -> Popup X         ContentPresenter -> PopupPresenter X
-
+<br><br>
   부모와 자식간의 참조는 아래 단방향만 가능하도록 하였으며, 최대한 외부를 모르도록 구성을 하였습니다.
-
+<br><br>
   외부에서 팝업이 열릴 경우 PopupPresenter를 생성하며, 탭에 따라 PopupPresenter에서 ContentPresenter가 생겨납니다. 닫거나 탭이 바뀔 경우 이전 Presenter의
   연결을 모두 끊고 참조를 null로 하여 가비지 컬렉터(GC)에 수집되게 하여 처리를 합니다. PopupPresenter는 외부에서 생성될 때 ShopPopup의 OnDisable시 호출되는
   Action에 자기 자신의 연결을 끊는 Dispose 함수를 구독하게 하여, OnDisable 생명주기 발동 시 처리가 되도록 구성을 하였습니다.
