@@ -96,7 +96,7 @@
   ㄴ ShopPopupCostumeContent <br>
   (위의 Content는 모두 Monobehavior 오브젝트입니다)
 <br><br>
-  ShopPopupPresenter <br>
+  <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;">ShopPopupPresenter </h3><br>
   ㄴ ShopPopupPackagePresenter -> IShopPopupPackageContent <br>
   ㄴ ShopPopupGemPresenter     -> IShopPopupGemContent <br>
   ㄴ ShopPopupCostumePresenter -> IShopPopupCostumePresenter <br>
