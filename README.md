@@ -52,9 +52,9 @@
   람다식을 사용하지 않아 함수를 추가하고 제거하는 부분이 명확하기 때문에 사용하였으며, 람다식을 사용하거나 추가/제거 작업이 자주 일어난다면
   인터페이스를 활용한 옵저버 패턴을 사용할 것 같습니다
 <br><br>
-* FacilityInfo <br>
-  - 굉장히 간단한 코드로 ScriptableObject를 사용하는 예시입니다. 해당 정보를 InfotableMgr라는 코드에서 관리를 하며, 필요한 경우
-  원하는 정보만 불러다가 사용합니다. 일종의 데이터 테이블을 간략화 한 것입니다.
+* AttributeUtil <br>
+  - 오브젝트의 자식으로 찾아야 할 컴포넌트들을 자동으로 찾아주는 기능, 숫자 데이터와 참조타입 데이터의 데이터가 올바르게 있는지를 판단하는 데이터 검증을
+    Attribute와 Reflection을 활용하여 제작하였습니다.
 <br><br>
 * AddressableMgr <br>
   - Addressables를 사용하게 되었을 때 Instance의 생성이 필요한지, 또는 단순한 Resource가 필요한지에 따라 실제로 Load하고 Release를
