@@ -84,6 +84,9 @@
 * FieldObj <br>
   - BuildingObj를 상속받은 밭 오브젝트입니다. 밭 오브젝트만이 사용할 수 있는 기능을 위하여 IFieldObjClickCheck라는 인터페이스 구현체를 갖고 있습니다. 중재자는
     사용하지 않는 방식으로 갖고 있으며, 필요한 기능을 오버라이딩하여 사용합니다.
+
+* StudentUnitDataEditor <br>
+  - ScriptableObject 클래스의 Inspector를 보다 보기 편하고 간편한 초기화가 가능하도록 Custom을 Editor 클래스입니다.
 -----------------------
 <br><br><br>
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < MVP > </h3>
@@ -110,7 +113,6 @@
   외부에서 팝업이 열릴 경우 PopupPresenter를 생성하며, 탭에 따라 PopupPresenter에서 ContentPresenter가 생겨납니다. 닫거나 탭이 바뀔 경우 이전 Presenter의
   연결을 모두 끊고 참조를 null로 하여 가비지 컬렉터(GC)에 수집되게 하여 처리를 합니다. PopupPresenter는 외부에서 생성될 때 ShopPopup의 OnDisable시 호출되는
   Action에 자기 자신의 연결을 끊는 Dispose 함수를 구독하게 하여, OnDisable 생명주기 발동 시 처리가 되도록 구성을 하였습니다.
-
   
     
 
