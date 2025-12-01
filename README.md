@@ -67,6 +67,9 @@
 * BuildingBehaviorInjector <br>
   - BuildingObj에 DI를 주입시키기 위하여 사용하는 중간자의 역할로 인터페이스로 구현 된 클래스들을 갖고 있으며, 주입을 통하여 실행 함수를
     주입시키고 BuildingObj에서 실행함수를 호출하게 하여 연결 된 실행함수를 호출할 수 있도록 하는 역할을 합니다.
+
+* StudentUnitDataEditor <br>
+  - ScriptableObject 클래스의 Inspector를 보다 보기 편하고 간편한 초기화가 가능하도록 Custom을 Editor 클래스입니다.
 -----------------------
 <br><br><br>
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < DI > </h3>
@@ -84,9 +87,6 @@
 * FieldObj <br>
   - BuildingObj를 상속받은 밭 오브젝트입니다. 밭 오브젝트만이 사용할 수 있는 기능을 위하여 IFieldObjClickCheck라는 인터페이스 구현체를 갖고 있습니다. 중재자는
     사용하지 않는 방식으로 갖고 있으며, 필요한 기능을 오버라이딩하여 사용합니다.
-
-* StudentUnitDataEditor <br>
-  - ScriptableObject 클래스의 Inspector를 보다 보기 편하고 간편한 초기화가 가능하도록 Custom을 Editor 클래스입니다.
 -----------------------
 <br><br><br>
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < MVP > </h3>
