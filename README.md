@@ -23,9 +23,6 @@
 ---------------------
 <br><br>
 < 업로드 된 파일에 대한 간략한 설명 >
-* GameMgr <br>
-  - MVC 구조의 가장 주된 설계로 여러 싱글턴 클래스들이 올바른 실행 순서를 가질 수 있도록 가장 최우선적으로 정의되고 초기화 순서를 잡는 역할을 합니다.
-<br><br>
 * PostBoxData <br>
   - 데이터를 저장하는 방식중의 하나로 우편함과 관련 된 데이터를 관리합니다. Firebase의 RealTime Database를 사용하여 공용우편함의 경우
   유저의 데이터가 아닌 Official Root를 통해 게임을 시작 시 or 게임 플레이 중 Trigger로 새로운 우편함이 생기거나 하였을 때 추가가되며,
@@ -59,15 +56,13 @@
 * AddressableMgr <br>
   - Addressables를 사용하게 되었을 때 Instance의 생성이 필요한지, 또는 단순한 Resource가 필요한지에 따라 실제로 Load하고 Release를
     할 수 있도록 관리하는 매니저 클래스입니다.
+  - Load 후 Release할 때에 즉시 Release를 하여 GC를 수집하게 하는 것이 아닌 해당 키를 기억하여 팝업이 발생하거나 화면 전환이 생기는 등
+    유저가 프레임이 끊김을 느끼지 못하도록 하는 시점에 처리를 하도록 가비지를 관리합니다.
 <br><br>
-* BuildingObj - FieldObj <br>
-  - DI를 프레임워크 없이 사용하기 위하여 최근에 작업한 Isometric에 포함 된 건물 오브젝트입니다. 상속을 기반으로 만든 부모 클래스이며,
-    FieldObj의 경우 BuildingObj를 상속하여 사용하여 만든, 텃밭 오브젝트로 여러 작물을 심고 재배할 수 있습니다.
-<br><br>
-* BuildingBehaviorInjector <br>
-  - BuildingObj에 DI를 주입시키기 위하여 사용하는 중간자의 역할로 인터페이스로 구현 된 클래스들을 갖고 있으며, 주입을 통하여 실행 함수를
-    주입시키고 BuildingObj에서 실행함수를 호출하게 하여 연결 된 실행함수를 호출할 수 있도록 하는 역할을 합니다.
-
+* WorldScenePopupMgr
+  - Popup을 관리하는 매니저 클래스입니다. 기본적인 PopupMgr에서 씬마다 교체가 편리하도록 상속을 받아 파생을 시킵니다. 그리고 VContainer를
+    사용 시 런타임중에 생성되는 클래스의 경우 주입을 받지 못하는 문제를 해결하기 위해, 팝업 내에 주입이 필요한 클래스들을 입력하여 직접 주입을
+    시켜주는 역할을 합니다.
 * StudentUnitDataEditor <br>
   - ScriptableObject 클래스의 Inspector를 보다 보기 편하고 간편한 초기화가 가능하도록 Custom을 Editor 클래스입니다.
 -----------------------
