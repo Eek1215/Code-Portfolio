@@ -3,7 +3,8 @@
     </div>
     <div style="text-align: left;"> 
     <h2 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> 이재교 [ Unity 클라이언트 프로그래머 ] </h2>  
-    <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">코딩을 하면서 세운 규칙과 스타일의 예시입니다. 협업 시 남들이 제 코드를 보고 어려움을 겪지 않았으면 좋겠다는 생각을 늘 품고 있습니다.</li> </div> 
+    <div style="font-weight: 700; font-size: 15px; text-align: left; color: #282d33;">코딩을 하면서 세운 규칙과 스타일의 예시입니다. 협업 시 다른 팀원들이 제 코드를 보고 어려움을 겪지 않았으면 좋겠다는 생각을 늘 품고 있습니다. 또한
+    의존성 문제와 가독성을 신경쓰며 코드 스타일을 확립하였습니다.</li> </div> 
     </div>
 
 <br><br>
@@ -63,25 +64,9 @@
   - Popup을 관리하는 매니저 클래스입니다. 기본적인 PopupMgr에서 씬마다 교체가 편리하도록 상속을 받아 파생을 시킵니다. 그리고 VContainer를
     사용 시 런타임중에 생성되는 클래스의 경우 주입을 받지 못하는 문제를 해결하기 위해, 팝업 내에 주입이 필요한 클래스들을 입력하여 직접 주입을
     시켜주는 역할을 합니다.
+<br><br>
 * StudentUnitDataEditor <br>
   - ScriptableObject 클래스의 Inspector를 보다 보기 편하고 간편한 초기화가 가능하도록 Custom을 Editor 클래스입니다.
------------------------
-<br><br><br>
-<h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < DI > </h3>
-- 협업에 중요한 의존성 주입을 통하여 개발하는 방식을 새 프로젝트에 다루어보았습니다. Zenject, VContainer를 사용하지 않은 기본 BehaviorInjector라는 주입기를
-직접 생성하여 BuildingObj에 주입하는 방식으로 하였습니다. 이는 프레임워크를 사용하기 이전 돌아가는 프로세스를 이해하기 위함이었으며, 차후에는 VContainer를 별도로
-공부를 하였습니다.
-
-* BuildingObj <br>
-  - Isometric 타일에 건물을 지을 때 사용하는 가장 기본 클래스입니다. 모든 건물이 가지는 공통적인 성능을 갖고 있습니다. 실행 함수를 BuildingBehaviorInjector에 호출시켜,
-    직접적인 실행 로직이 Injector에 주입되어 있는 인터페이스 구현체를 통해 실행할 수 있습니다.
-
-* BuildingBehaviorInjector <br>
-  - BuildingObj와 실행 인터페이스 구현체를 잇는 중재자로 외부에서 구현체를 주입받아 관리를 하고 실행 로직을 구현체에 전달합니다.
- 
-* FieldObj <br>
-  - BuildingObj를 상속받은 밭 오브젝트입니다. 밭 오브젝트만이 사용할 수 있는 기능을 위하여 IFieldObjClickCheck라는 인터페이스 구현체를 갖고 있습니다. 중재자는
-    사용하지 않는 방식으로 갖고 있으며, 필요한 기능을 오버라이딩하여 사용합니다.
 -----------------------
 <br><br><br>
 <h3 style="border-bottom: 1px solid #d8dee4; color: #282d33;"> < MVP > </h3>
