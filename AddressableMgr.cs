@@ -1,35 +1,18 @@
+using Cysharp.Threading.Tasks;
+using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.AddressableAssets;
+using UnityEngine.InputSystem;
 using UnityEngine.ResourceManagement.AsyncOperations;
-using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
+using VContainer;
 
-public static class AddressableKeyRef
-{
-    private static AddressableKeyTable _table;
-    private static AddressableKeyTable Table
-    {
-        get
-        {
-            if(_table == null)
-            {
-                _table = Resources.Load<AddressableKeyTable>("AddressableKeyTable");
-            }
-            return _table;
-        }
-    }
-
-    public static string ImageA => Table.ImageA;
-    public static string PrefabA => Table.PrefabA;
-    public static string AudioClipA => Table.AudioClipA;
-    public static string MaterialA => Table.MaterialA;
-
-}
-
-public class AddressableMgr : Singleton<AddressableMgr>
+public class AddressableMgr : MonoBehaviour
 {
     #region 데이터 초기화 관련 필드
     public Text txt_patchSize;
@@ -37,7 +20,7 @@ public class AddressableMgr : Singleton<AddressableMgr>
     public Text txt_patchPercent;
 
     // Group의 Label들
-    public AssetLabelReference[] Labels;
+    [SerializeField] private string[] Labels;
 
     [SerializeField] private long _patchTotalSize;
     // Label별 용량의 크기.
@@ -49,9 +32,17 @@ public class AddressableMgr : Singleton<AddressableMgr>
     // Sprite, Shader, Material 처럼 인스터스가 아닌 리소스들
     private Dictionary<string, (AsyncOperationHandle handle, int refCnt)> _sharedAssets = new();
     // 인스터스화가 필요한 데이터들.
-    private Dictionary<string, List<AsyncOperationHandle<GameObject>>> _instances = new();
-    
-    public override void Init() { }
+    private Dictionary<string, List<AsyncOperationHandle<GameObject>>> _sharedInstances = new();
+
+    [Inject] private SceneMgr _sceneMgr;
+
+    // 어드레서블에서 Remove하려고 대기중인 참조들.
+    private Dictionary<string, AsyncOperationHandle<GameObject>> _markReleaseObjs = new();
+    private HashSet<string> _markReleaseKeys = new();
+
+    private Coroutine cor_autoReleaseProcess;
+    private bool _bAutoReleaseEnabled = true;
+
 
     #region 데이터 확인 및 불러오기, 제거
     public void InitCheck()
@@ -60,17 +51,16 @@ public class AddressableMgr : Singleton<AddressableMgr>
         StartCoroutine(CheckUpdateFiles());
     }
 
+    private void OnDestroy()
+    {
+        ReleaseAll();
+    }
+
     public void OnClickDeleteData()
     {
-        List<string> labels = new();
-        for (int i = 0; i < Labels.Length; i++)
-        {
-            labels.Add(Labels[i].labelString);
-        }
-
         _patchTotalSize = default;
 
-        foreach (var label in labels)
+        foreach (var label in Labels)
         {
             // byte로 받아옴
             Addressables.ClearDependencyCacheAsync(label);
@@ -91,15 +81,9 @@ public class AddressableMgr : Singleton<AddressableMgr>
     {
         yield return new WaitUntil(() => _bInit);
 
-        List<string> labels = new();
-        for (int i = 0; i < Labels.Length; i++)
-        {
-            labels.Add(Labels[i].labelString);
-        }
-
         _patchTotalSize = default;
 
-        foreach(var label in labels)
+        foreach(var label in Labels)
         {
             // byte로 받아옴
             var handle = Addressables.GetDownloadSizeAsync(label);
@@ -115,6 +99,7 @@ public class AddressableMgr : Singleton<AddressableMgr>
         else
         {
             slider_patch.value = 1;
+            txt_patchSize.text = "0mb";
             txt_patchPercent.text = "100 %";
         }
 
@@ -123,13 +108,7 @@ public class AddressableMgr : Singleton<AddressableMgr>
 
     IEnumerator PatchFiles()
     {
-        List<string> labels = new();
-        for (int i = 0; i < Labels.Length; i++)
-        {
-            labels.Add(Labels[i].labelString);
-        }
-
-        foreach (var label in labels)
+        foreach (var label in Labels)
         {
             // byte로 받아옴
             var handle = Addressables.GetDownloadSizeAsync(label);
@@ -174,12 +153,17 @@ public class AddressableMgr : Singleton<AddressableMgr>
                 total += file.Value;
             }
 
-            slider_patch.value = total / _patchTotalSize;
-            txt_patchPercent.text = (int)(slider_patch.value * 100) + " %";
+            if (total > 0)
+            {
+                slider_patch.value = total / _patchTotalSize;
+                txt_patchPercent.text = (int)(slider_patch.value * 100) + " %";
+            }
 
             if(total == _patchTotalSize)
             {
-                SceneMgr.Instance.LoadScene(eScene.Play);
+                yield return new WaitForSeconds(2f);
+
+                _sceneMgr.LoadScene(eScene.World);
                 break;
             }
 
@@ -214,12 +198,36 @@ public class AddressableMgr : Singleton<AddressableMgr>
     #endregion
 
     #region 데이터 Load 및 Release
-    public async UniTask<T> LoadAsset<T>(string key)
+    void StartAutoReleaseProcess()
     {
-        if(_sharedAssets.TryGetValue(key, out var loadAsset))
+        if (cor_autoReleaseProcess == null)
+        {
+            cor_autoReleaseProcess = StartCoroutine(AutoReleaseProcess());
+        }
+    }
+
+    public async UniTask<T> LoadAssetAsync<T>(string key)
+    {
+        StartAutoReleaseProcess();
+
+        if(_markReleaseKeys.Contains(key))
+        {
+            CancelMarkKeyAsset(key);
+        }
+
+        if (_sharedAssets.TryGetValue(key, out var loadAsset))
         {
             _sharedAssets[key] = (loadAsset.handle, loadAsset.refCnt + 1);
-            return (T)loadAsset.handle.Result;
+
+            if(loadAsset.handle.Result is T)
+            {
+                return (T)loadAsset.handle.Result;
+            }
+            else
+            {
+                Debug.LogError($"Type mismatch for key: {key}. Expected: {typeof(T)}, Got: {loadAsset.handle.Result?.GetType()}");
+                return default;
+            }
         }
 
         var handle = Addressables.LoadAssetAsync<T>(key);
@@ -232,30 +240,23 @@ public class AddressableMgr : Singleton<AddressableMgr>
             return default;
         }
 
+        Debug.Log($"[LoadAsset] Successfully loaded: {key}, Result type: {handle.Result?.GetType().Name ?? "NULL"}");
+
         _sharedAssets[key] = (handle, 1);
         return handle.Result;
     }
 
-    public void ReleaseShared<T>(string key)
+    public async UniTask<AsyncOperationHandle<GameObject>> InstantiateAsync(string key, Transform parent)
     {
-        if(_sharedAssets.TryGetValue(key, out var loadedAsset))
-        {
-            int releasedCnt = loadedAsset.refCnt - 1;
-            if(releasedCnt <= 0)
-            {
-                Addressables.Release(loadedAsset.handle);
-                _sharedAssets.Remove(key);
-            }
-            else
-            {
-                _sharedAssets[key] = (loadedAsset.handle, releasedCnt);
-            }
-        }
-    }
+        StartAutoReleaseProcess();
 
-    public async UniTask<GameObject> Instantiate(string key)
-    {
-        var handle = Addressables.InstantiateAsync(key);
+        if(_markReleaseObjs.ContainsKey(key))
+        {
+            CancelMarkObjAsset(key);
+        }
+
+
+        var handle = Addressables.InstantiateAsync(key, parent);
         await handle.Task;
 
         if (handle.Status != AsyncOperationStatus.Succeeded)
@@ -265,30 +266,188 @@ public class AddressableMgr : Singleton<AddressableMgr>
             return default;
         }
 
-        if (!_instances.TryGetValue(key, out var list))
+        if (!_sharedInstances.TryGetValue(key, out var list))
         {
             list = new();
-            _instances[key] = list;
+            list.Add(handle);
+            _sharedInstances[key] = list;
         }
 
-        list.Add(handle);
-        return handle.Result;
+        return handle;
+    }
+
+    // Asset 타입을 반환. Release 호출 -> Mark에 담아둠 
+    public void ReleaseAsset(string key)
+    {
+        if (_sharedAssets.TryGetValue(key, out var loadedAsset))
+        {
+            int releasedCnt = loadedAsset.refCnt - 1;
+            // Ref 카운트가 0이 된다면 Mark 리스트에 넣어서 제거될 타이밍에 제거하기.
+            if (releasedCnt <= 0)
+            {
+                _sharedAssets[key] = (loadedAsset.handle, 0);
+                MarkAssetForRelease(key);
+            }
+            else
+            {
+                _sharedAssets[key] = (loadedAsset.handle, releasedCnt);
+            }
+        }
+    }
+
+    public void ReleaseAssets(params string[] keys)
+    {
+        foreach (var key in keys)
+        {
+            ReleaseAsset(key);
+        }
     }
 
     public void ReleaseInstance(string key, AsyncOperationHandle<GameObject> instance)
     {
-        if(_instances.TryGetValue(key, out var list))
+        if (_sharedInstances.TryGetValue(key, out var list))
         {
-            if(list.Remove(instance))
-            {
-                Addressables.ReleaseInstance(instance);
-            }
+            MarkInstanceForRelease(key, instance);            
+        }
+    }
 
-            if(list.Count == 0)
+    void MarkInstanceForRelease(string key, AsyncOperationHandle<GameObject> instance)
+    {
+        if (_sharedInstances.TryGetValue(key, out var inst))
+        {
+            // Asset이랑 다르게 Instance가 여러개여도 하나씩 해제를 해야 함. 생성한거라서.
+            if (!_markReleaseObjs.ContainsKey(key))
             {
-                _instances.Remove(key);
+                _markReleaseObjs.Add(key, instance);
             }
         }
     }
+
+    void MarkAssetForRelease(string key)
+    {
+        if (_sharedAssets.TryGetValue(key, out var loadedAsset))
+        {
+            if (loadedAsset.refCnt > 0)
+            {
+                Debug.LogError($"레퍼런스가 1개 이상 사용중인데 해제 대기중 {key}");
+                return;
+            }
+
+            if (!_markReleaseKeys.Contains(key))
+            {
+                _markReleaseKeys.Add(key);
+            }
+        }
+    }
+
+    // 제거하려는 스케줄러에 넣어놨지만 다시 사용해서 스케줄러에서 빼내는 것.
+    void CancelMarkKeyAsset(string key)
+    {
+        if (_markReleaseKeys.Contains(key))
+        {
+            _markReleaseKeys.Remove(key);
+        }
+    }
+
+    void CancelMarkObjAsset(string key)
+    {
+        if(_markReleaseObjs.ContainsKey(key))
+        {
+            _markReleaseObjs.Remove(key);
+        }
+    }
+
+    public void ReleaseAll()
+    {
+        foreach (var kvp in _sharedAssets)
+        {
+            Addressables.Release(kvp.Value.handle);
+        }
+        _markReleaseKeys.Clear();
+
+        foreach (var kvp in _sharedInstances)
+        {
+            foreach (var handle in kvp.Value)
+            {
+                if (handle.IsValid())
+                {
+                    Addressables.ReleaseInstance(handle);
+                }
+            }
+
+            kvp.Value.Clear();
+        }
+        _markReleaseObjs.Clear();
+
+        _sharedAssets.Clear();
+    }
     #endregion
+
+    private IEnumerator AutoReleaseProcess()
+    {
+        WaitForSeconds delay = new WaitForSeconds(3f);
+        while(true)
+        {
+            // 프로세스가 계속 돌다가 쌓인 레퍼런스가 있다면 제거.
+            if(_bAutoReleaseEnabled && (_markReleaseKeys.Count > 0 || _markReleaseObjs.Count > 0))
+            {
+                yield return ProcessBatch();
+            }
+            else
+            {
+                yield return delay;
+            }
+        }
+    }
+
+    // 실제 쌓여있는 리소스들을 해제하는 중.
+    private int _processed;
+    private IEnumerator ProcessBatch()
+    {
+        // 한 번에 처리할 개수.
+        const int BATCH_SIZE = 3;
+        int batchedCnt = 0;
+
+        int i = 0;
+        foreach(string key in _markReleaseKeys)
+        {
+            if (_sharedAssets.TryGetValue(key, out var loadedAsset))
+            {
+                Debug.Log("KEY : " + loadedAsset.refCnt);
+                Addressables.Release(loadedAsset.handle);
+                if (loadedAsset.refCnt == 0)
+                {
+                    _sharedAssets.Remove(key);
+                    batchedCnt++;
+                    _processed++;
+                }
+            }
+
+            i++;
+            if(i > BATCH_SIZE) break;
+        }
+
+        i = batchedCnt;
+        foreach(var obj in _markReleaseObjs)
+        {
+            _sharedInstances.Remove(obj.Key);
+
+            Addressables.ReleaseInstance(obj.Value.Result);
+
+            if (_sharedInstances[obj.Key].Count == 0)
+            {
+                _sharedInstances.Remove(obj.Key);
+                batchedCnt++;
+                _processed++;
+            }
+
+            i++;
+            if (i > BATCH_SIZE) break;
+        }
+
+        if (_processed > 0 && _processed % 10 == 0)
+        {
+            yield return Resources.UnloadUnusedAssets();
+        }
+    }
 }
